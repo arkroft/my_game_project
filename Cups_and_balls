@@ -1,0 +1,192 @@
+import pygame
+import random
+
+class Point:
+    def __init__(self,x,y):
+        self.x = x
+        self.y = y
+
+class Glass:
+    dxt = 50
+    dxb = 70
+    h = 80
+    r = 20
+    a = Point(0, 0)
+    b = Point(0, 0)
+    c = Point(0, 0)
+    d = Point(0, 0)
+    m = 0
+    bv = False
+
+    def __init__(self, x, y, h, v = False):
+        self.x = x
+        self.y = y
+        self.h = h
+        m = int((self.dxb - self.dxt) / 2)
+        self.a = Point(x,y)
+        self.b = Point(x + m, y - h)
+        self.c = Point(x + self.dxb - m, y - h)
+        self.d = Point(x + self.dxb, y)
+        self.bv = v
+
+def ReturnActiveGlass(g1, g2, g3, mx):
+    if (mx >= g2.a.x) and (mx <= g2.d.x):
+        return 2
+    else:
+        if mx >= g3.a.x and mx <= g3.d.x:
+            return 3
+        else:
+            if mx >= g1.a.x and mx <= g1.d.x:
+                return 1
+            else:
+                return 0
+
+def DrawMans():
+    pygame.draw.rect(screen, BLACK, (indent_right, indent_bttm, wight + 700, hight + 290))
+    pygame.draw.circle(screen, GRAY, (450, 300), 150)
+    pygame.draw.circle(screen, GRAY, (450, 113), 60)
+    pygame.draw.rect(screen, GREEN, (indent_right, indent_bttm + 270, wight + 700, hight + 230))
+    pygame.draw.circle(screen, GRAY, (150, 525), 150)
+    pygame.draw.circle(screen, GRAY, (155, 350), 60)
+
+def DrawBall(nn):
+    if nn == 1:
+        pygame.draw.circle(screen, RED, (int(x1 + (dxb / 2)), y - r1), r1)
+    if nn == 2:
+        pygame.draw.circle(screen, RED, (int(x2 + (dxb / 2)), y - r1), r1)
+    if nn == 3:
+        pygame.draw.circle(screen, RED, (int(x3 + (dxb / 2)), y - r1), r1)
+
+def DrawGlasses(g1, g2, g3):
+    DrawMans()
+    if g1.bv:
+        pygame.draw.aalines(screen, WHITE, True, [[g1.a.x, g1.a.y], [g1.b.x, g1.b.y], [g1.c.x, g1.c.y], [g1.d.x, g1.d.y]])
+    else:
+        pygame.draw.polygon(screen, WHITE, [[g1.a.x, g1.a.y], [g1.b.x, g1.b.y], [g1.c.x, g1.c.y], [g1.d.x, g1.d.y]])
+
+    if g2.bv:
+        pygame.draw.aalines(screen, WHITE, True, [[g2.a.x, g2.a.y], [g2.b.x, g2.b.y], [g2.c.x, g2.c.y], [g2.d.x, g2.d.y]])
+    else:
+        pygame.draw.polygon(screen, WHITE, [[g2.a.x, g2.a.y], [g2.b.x, g2.b.y], [g2.c.x, g2.c.y], [g2.d.x, g2.d.y]])
+
+    if g3.bv:
+        pygame.draw.aalines(screen, WHITE, True, [[g3.a.x, g3.a.y], [g3.b.x, g3.b.y], [g3.c.x, g3.c.y], [g3.d.x, g3.d.y]])
+    else:
+        pygame.draw.polygon(screen, WHITE, [[g3.a.x, g3.a.y], [g3.b.x, g3.b.y], [g3.c.x, g3.c.y], [g3.d.x, g3.d.y]])
+
+def ShowSmiles(n, text, screen):
+    if n == 1:
+        g1n = Glass(x1, y, hh, True)
+        g2n = Glass(x2, y, hh)
+        g3n = Glass(x3, y, hh)
+        DrawGlasses(g1n, g2n, g3n)
+    if n == 2:
+        g1n = Glass(x1, y, hh)
+        g2n = Glass(x2, y, hh, True)
+        g3n = Glass(x3, y, hh)
+        DrawGlasses(g1n, g2n, g3n)
+    if n == 3:
+        g1n = Glass(x1, y, hh)
+        g2n = Glass(x2, y, hh)
+        g3n = Glass(x3, y, hh, True)
+        DrawGlasses(g1n, g2n, g3n)
+
+    DrawBall(n)
+    pygame.mixer.music.load('zvuk-iz-eralasha.mp3')
+    pygame.mixer.music.play()
+    f = pygame.font.Font(None, 36)
+    txt = f.render(text, 1, (220, 0, 0))
+    screen.blit(txt, (10, 100))
+    pygame.draw.circle(screen, RED, (450, 129), 25)
+    pygame.draw.circle(screen, GRAY, (450, 115), 29)
+
+dxt = 50
+dxb = 70
+FPS = 20
+FPS_2 = 0.5
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GRAY = (125, 125, 125)
+GREEN = (0, 200, 64)
+RED = (255, 0, 0)
+ran_crc_x = random.randrange(235, 456, 110)
+indent_right = 0
+indent_bttm = 0
+circle_x = 345
+circle_y = 270
+r1 = 20
+wight = 0
+hight = 0
+y = 290
+
+screen = pygame.display.set_mode((700, 500))
+pygame.display.set_caption('Проверь свою интуицию!')
+pygame.init()
+clock = pygame.time.Clock()
+
+x1 = 200
+x2 = 310
+x3 = 420
+hh = 80
+g1 = Glass(x1, y, hh)
+g2 = Glass(x2, y, hh, True)
+g3 = Glass(x3, y, hh)
+DrawGlasses(g1, g2, g3)
+DrawBall(2)
+
+pygame.display.update()
+clock.tick(FPS_2)
+
+ran_crc = random.randint(1,3)
+mp = 0
+
+k = 0
+while True:
+    for i in pygame.event.get():
+        if i.type == pygame.QUIT:
+            exit()
+        if i.type == pygame.MOUSEBUTTONDOWN and i.button == 1:
+            mp = i.pos[0]
+            n = ReturnActiveGlass(g1, g2, g3, mp)
+            if ran_crc == n:
+                ShowSmiles(ran_crc, 'У вас прекрасная интуиция!', screen)
+                pygame.display.update()
+                clock.tick(0.5)
+                exit()
+            else:
+                ShowSmiles(ran_crc, 'Вы были так близки к победе!', screen)
+                pygame.display.update()
+                clock.tick(0.5)
+                exit()
+        if k == 0:
+            k = 1
+            g1.bv = False
+            g2.bv = False
+            g3.bv = False
+            DrawGlasses(g1, g2, g3)
+
+            for i in range(2):
+                xn1 = x1
+                xn2 = x3
+                while xn1 < x3:
+                    xn1 += 1
+                    g1n = Glass(xn1, y, hh )
+                    xn2 -= 1
+                    g2n = Glass(xn2, y, hh )
+                    DrawGlasses(g1n, g2, g2n)
+                    clock.tick(150)
+                    pygame.display.update()
+
+                clock.tick(60)
+                xn1 = x1
+                xn2 = x2
+                while xn1 < x2:
+                    xn1 += 1
+                    g1n = Glass(xn1, y, hh )
+                    xn2 -= 1
+                    g2n = Glass(xn2, y, hh )
+                    DrawGlasses(g1n, g2n, g3)
+                    clock.tick(150)
+                    pygame.display.update()
+
+
